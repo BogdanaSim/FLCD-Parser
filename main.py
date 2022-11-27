@@ -3,6 +3,8 @@ import os
 from grammar import Grammar
 
 
+# TODO : create g2.txt/Syntax
+
 def print_grammar_menu():
     print("Menu grammar")
     print("1 - Read grammar from file")
@@ -40,8 +42,11 @@ if __name__ == '__main__':
             except Exception as e:
                 print(e)
         elif option == "6":
-            print("\n")
+            if grammar.check_if_cfg():
+                print("The given grammar is a cfg\n")
+            else:
+                print("The given grammar is not a cfg\n")
         elif option == "7":
             done = True
         else:
-            print("This option does not exist!")
+            print("This option does not exist!\n")

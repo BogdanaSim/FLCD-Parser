@@ -1,5 +1,5 @@
 class Grammar:
-    # TODO : check if grammar is cfg
+    # TODO : verify if the checker for cfg is ok for multiple grammars
     def __init__(self, filename):
         self.N = []  # non-terminals
         self.E = []  # terminals
@@ -50,6 +50,14 @@ class Grammar:
             set_productions += p + " | "
         set_productions = set_productions[:-3] + ",\n"
         return set_productions
+
+    def check_if_cfg(self):
+        # If the left-hand side of every production is of length 1 (i.e. consists of exactly one non-terminal symbol),
+        # the grammar is context-free.
+        for production_left in self.P.keys():
+            if len(production_left) > 1:
+                return False
+        return True
 
     def __str__(self):
         P = ""
