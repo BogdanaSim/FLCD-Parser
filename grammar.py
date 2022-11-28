@@ -1,65 +1,48 @@
+from enum import Enum
+import attrs
+from typing import List, Dict
+
+
+class GrammarSymbols(Enum):
+    LINE_SEPARATOR = " "
+    RIGHT_SIDE_SEPARATOR = "|"
+    ASSIGNMENT_OPERATOR = "::="
+
+
+@attrs.define
 class Grammar:
-    # TODO : check if grammar is cfg
-    def __init__(self, filename):
-        self.N = []  # non-terminals
-        self.E = []  # terminals
-        self.P = {}  # set of productions
-        self.S = None  # start symbol
-        self.read_input_file(filename)
+    starting_symbol: str
+    terminals: List[str] = attrs.field(default=attrs.Factory(list))
+    nonterminals: List[str] = attrs.field(default=attrs.Factory(list))
+    productions: Dict[str, List[str]] = attrs.field(
+        default=attrs.Factory(dict))
 
-    def read_input_file(self, filename):
-        with open(filename) as file:
-            self.N = file.readline().strip().replace(" ", "")[3:-1].split(',')
-            self.E = file.readline().strip().replace(" ", "")[3:-1].split(',')
-            self.S = file.readline().strip().replace(" ", "").split("=")[1]
-            file.readline()
-            for line in file:
-                if line != '}' and len(line) > 0:
-                    pair = line.strip().replace(" ", "").split('->')
-                    production_left = pair[0]
-                    production_right = pair[1]
-                    target = line.strip().replace(" ", "").split('->')[1].strip()
-                    productions = production_right.split("|")
-                    if production_left in self.P.keys():
-                        self.P[production_left].append(target)
-                    else:
-                        self.P[production_left] = productions
+    @staticmethod
+    def get_grammar_from_file(file_name: str):
+        production_lines: List[str] = []
+        with open(file_name) as f:
+            nonterminals = f.readline().strip().split(
+                GrammarSymbols.LINE_SEPARATOR.value)
+            terminals = f.readline().strip().split(
+                GrammarSymbols.LINE_SEPARATOR.value)
+            starting_symbol = f.readline().strip()
 
-    def get_set_terminals_str(self):
-        return "N = {" + ", ".join([str(x) for x in self.N]) + "}\n"
+            production_lines = [line.strip() for line in f.readlines()]
 
-    def get_set_non_terminals_str(self):
-        return "E = {" + ", ".join([str(x) for x in self.E]) + "}\n"
+        productions: Dict[str, List[str]] = {}
+        for line in production_lines:
+            production_left, production_right = line.split(
+                GrammarSymbols.ASSIGNMENT_OPERATOR.value)
+            productions[production_left.strip()] = [
+                x.strip() for x in production_right.split(
+                    GrammarSymbols.RIGHT_SIDE_SEPARATOR.value)]
 
-    def get_set_productions_str(self):
-        P = ""
-        for production_left in self.P.keys():
-            production_right = self.P[production_left]
-            P += str(production_left) + " -> "
-            for p in production_right:
-                P += p + " | "
-            P = P[:-3] + "\n"
-        return "P = {\n" + P + "}\n"
+        return Grammar(starting_symbol, terminals, nonterminals, productions)
 
-    def get_set_productions_for_non_terminal_str(self, terminal):
-        if terminal not in self.N:
-            raise Exception("The input is not a valid terminal!")
-        set_productions = str(terminal) + " -> "
-        production_right = self.P[terminal]
-        for p in production_right:
-            set_productions += p + " | "
-        set_productions = set_productions[:-3] + ",\n"
-        return set_productions
+    def get_productions_for_nonterminal(self, nonterminal):
+        return self.productions[nonterminal]
 
-    def __str__(self):
-        P = ""
-        for production_left in self.P.keys():
-            production_right = self.P[production_left]
-            P += str(production_left) + " -> "
-            for p in production_right:
-                P += p + " | "
-            P = P[:-3] + ",\n"
-
-        return "N = {" + ", ".join([str(x) for x in self.N]) + "}\n" + "E = {" + ", ".join(
-            [str(x) for x in self.E]) + "}\n" + "S = " + str(
-            self.S) + "\n" + "P = {\n" + P + "}\n"
+    def verify_CFG(self):
+        return not any(
+            len(production_left.split(GrammarSymbols.LINE_SEPARATOR.value)) > 1
+            for production_left in self.productions.keys())
