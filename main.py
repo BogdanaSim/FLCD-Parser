@@ -2,7 +2,6 @@ import os
 
 from grammar import Grammar
 
-
 def print_grammar_menu():
     print("=== GRAMMAR ===\n")
     print("1 - Read grammar from file")
