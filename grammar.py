@@ -12,10 +12,9 @@ class GrammarSymbols(Enum):
 @attrs.define
 class Grammar:
     starting_symbol: str
-    terminals: List[str] = attrs.field(default=attrs.Factory(list))
-    nonterminals: List[str] = attrs.field(default=attrs.Factory(list))
-    productions: Dict[str, List[str]] = attrs.field(
-        default=attrs.Factory(dict))
+    terminals: List[str] = attrs.Factory(list)
+    nonterminals: List[str] = attrs.Factory(list)
+    productions: Dict[str, List[str]] = attrs.Factory(dict)
 
     @staticmethod
     def get_grammar_from_file(file_name: str):
