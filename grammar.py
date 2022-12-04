@@ -27,7 +27,8 @@ class Grammar:
                 GrammarSymbols.LINE_SEPARATOR.value)
             starting_symbol = f.readline().strip()
 
-            production_lines = [line.strip() for line in f.readlines()]
+            production_lines = [line.strip().removesuffix(';')
+                                for line in f.readlines()]
 
         productions: Dict[str, List[str]] = {}
         for line in production_lines:
@@ -39,10 +40,10 @@ class Grammar:
 
         return Grammar(starting_symbol, terminals, nonterminals, productions)
 
-    def get_productions_for_nonterminal(self, nonterminal):
+    def get_productions_for_nonterminal(self, nonterminal: str) -> List[str]:
         return self.productions[nonterminal]
 
-    def verify_CFG(self):
+    def verify_CFG(self) -> bool:
         return not any(
             len(production_left.split(GrammarSymbols.LINE_SEPARATOR.value)) > 1
             for production_left in self.productions.keys())
