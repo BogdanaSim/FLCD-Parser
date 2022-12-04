@@ -4,9 +4,9 @@ from typing import List, Dict
 
 
 class GrammarSymbols(Enum):
-    LINE_SEPARATOR = " "
-    RIGHT_SIDE_SEPARATOR = "|"
-    ASSIGNMENT_OPERATOR = "::="
+    LINE_SEPARATOR = ' '
+    RIGHT_SIDE_SEPARATOR = '|'
+    ASSIGNMENT_OPERATOR = '::='
 
 
 @attrs.define
