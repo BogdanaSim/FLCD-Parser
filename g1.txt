@@ -1,8 +1,4 @@
-S A B C D
-a b c d
 S
-S ::= aA | aC
-A ::= AB
-B ::= b
-C ::= aC | bCb
-D ::= bB | d | e
+a b c
+S
+S ::= aSbS | aS | c

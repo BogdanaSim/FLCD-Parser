@@ -1,7 +1,8 @@
 import os
 
 from grammar import Grammar
-from parser import Parser
+from output import ParserOutput
+from parser import Parser, ParsingStates
 
 
 def print_grammar_menu():
@@ -20,9 +21,30 @@ if __name__ == '__main__':
     grammar = Grammar.get_grammar_from_file("g1.txt")
     parser = Parser(grammar)
     # TODO: test/print results for each function
+    # parser.alpha = [('S', 1), ('a', -1), ('S', 1), ('a', -1), ('S', 1)]
+    # parser.beta = "aSbSbSbS"
+    # parser.current_position = 3
+    # parser.state = ParsingStates.BACK_STATE
+    # parser.alpha = [('S', 1), ('a', -1), ('S', 1), ('a', -1), ('S', 3), ('c', -1), ('b', -1), ('S', 3)]
+    # parser.beta = "cbS"
+    # parser.current_position = 5
+    # parser.state = ParsingStates.BACK_STATE
+    # parser.alpha = [('S', 1), ('a', -1), ('S', 2), ('a', -1), ('S', 3), ('c', -1), ('b', -1),('S', 2)]
+    # parser.beta = "aS"
+    # parser.current_position = 5
+    # parser.state = ParsingStates.BACK_STATE
+    # print(parser)
+    #
+    # parser.another_try()
+    #
+    # print(parser)
     print(parser)
-    parser.expand()
+    parser.algorithm_descendent_recursive("aacbc")
     print(parser)
+    parser_out = ParserOutput(grammar)
+    parser_out.get_table(parser.alpha)
+    # print(parser_out.print_table())
+    parser_out.print_pretty_table()
     # done = False
     # while not done:
     #     print_grammar_menu()

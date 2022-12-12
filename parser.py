@@ -67,13 +67,42 @@ class Parser:
         else:
             # should we raise an exception here?
             self.state = ParsingStates.BACK_STATE
-            self.alpha = self.alpha[:-1]
+            # self.alpha = self.alpha[:-1]
             self.beta = non_terminal + self.beta
         if self.current_position == 1 and non_terminal == "S":
             self.state = ParsingStates.ERROR_STATE
 
     def success(self):
         self.state = ParsingStates.FINAL_STATE
+
+    def algorithm_descendent_recursive(self, w):
+        while self.state != ParsingStates.FINAL_STATE and self.state != ParsingStates.ERROR_STATE:
+            if self.state == ParsingStates.NORMAL_STATE:
+                n = len(w)
+
+                if self.current_position == n + 1 and len(self.beta) == 0:
+                    self.success()
+                else:
+                    head_b = self.beta[0]
+                    if head_b in self.grammar.nonterminals:
+                        self.expand()
+                    else:
+                        if self.current_position - 1 < len(w) and head_b == w[self.current_position - 1]:
+                            self.advance()
+                        else:
+                            self.momentary_insuccess()
+            else:
+                if self.state == ParsingStates.BACK_STATE:
+                    head_a = self.alpha[-1]
+                    if head_a[0] in self.grammar.terminals:
+                        self.back()
+                    else:
+                        self.another_try()
+
+        if self.state == ParsingStates.ERROR_STATE:
+            print("Error")
+        else:
+            print("Sequence accepted")
 
     def __str__(self):
         return "(" + str(self.state.value) + ", " + str(self.current_position) + ", " + str(self.alpha) + ", " + str(
