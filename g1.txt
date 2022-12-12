@@ -2,7 +2,7 @@ S A B C D
 a b c d
 S
 S ::= aA | aC
-A ::= AB
+A ::= aB
 B ::= b
-C ::= aC | bCb
+C ::= c | aC | bCb
 D ::= bB | d | e
