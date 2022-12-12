@@ -81,6 +81,7 @@ class RecursiveDescentParserTest(unittest.TestCase):
         pass
 
     def test_parse(self) -> None:
+        self.parser.parse('aabc')
         pass
 
 

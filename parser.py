@@ -73,7 +73,7 @@ class Parser:
                 self.input_list.insert(0, production)
         else:
             self.state = ParsingStates.BACK_STATE
-            self.working_list.pop()
+#            self.working_list.pop()
             self.input_list.insert(0, nonterminal)
 
     def momentary_insuccess(self):
@@ -96,7 +96,8 @@ class Parser:
                 else:
                     if self.input_list[0] in self.grammar.nonterminals:
                         self.expand()
-                    elif self.input_list[0] == word[self.current_position]:
+                    elif self.current_position < len(word) and \
+                            self.input_list[0] == word[self.current_position]:
                         self.advance()
                     else:
                         self.momentary_insuccess()

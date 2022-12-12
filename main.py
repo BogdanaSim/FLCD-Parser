@@ -1,7 +1,6 @@
 import os
 
 from grammar import Grammar
-from parser import Parser
 
 
 def print_grammar_menu():
@@ -18,6 +17,7 @@ def print_grammar_menu():
 
 if __name__ == '__main__':
     grammar = Grammar.get_grammar_from_file("g1.txt")
+    """
     parser = Parser(grammar)
     # TODO: test/print results for each function
     print(parser)
@@ -56,3 +56,4 @@ if __name__ == '__main__':
     #         done = True
     #     else:
     #         print("This option does not exist!\n")
+    """
