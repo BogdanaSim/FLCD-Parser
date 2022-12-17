@@ -19,7 +19,7 @@ def print_grammar_menu():
 
 
 if __name__ == '__main__':
-    grammar = Grammar.get_grammar_from_file("g1.txt")
+    grammar = Grammar.get_grammar_from_file("g2.txt")
     parser = Parser(grammar)
     # TODO: test/print results for each function
     # parser.alpha = [('S', 1), ('a', -1), ('S', 1), ('a', -1), ('S', 1)]
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     #
     # print(parser)
     print(parser)
-    parser.algorithm_descendent_recursive("aacbc")
+    parser.algorithm_descendent_recursive("PIF.out")
     print(parser)
     parser_out = ParserOutput(grammar)
     parser_out.get_table(parser.alpha)

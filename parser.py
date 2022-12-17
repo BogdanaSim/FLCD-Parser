@@ -22,17 +22,28 @@ class Parser:
     # for terminals)
     alpha: list = attrs.field(default=attrs.Factory(
         list))  # should this be also a string?, harder to maintain the string if terminals are numbers
-    beta: str = attrs.field(default="S")  # kept as a string to get the head easier
+    beta: list = attrs.field(default=attrs.Factory(
+        list))  # kept as a string to get the head easier
 
-    # def __attrs_post_init__(self):
-    #     self.beta.append("S")
+    w: list = attrs.field(default=attrs.Factory(
+        list))
+
+    def __attrs_post_init__(self):
+        self.beta.append(self.grammar.starting_symbol)
+
+    def read_sequence_from_file(self, filename):
+        list_seq = []
+        with open(filename, "r") as file:
+            while line := file.readline().rstrip().split(" ")[0]:
+                list_seq.append(line)
+        self.w = list_seq
 
     def expand(self):
         head_input = self.beta[0]
         self.alpha.append((head_input, 1))  # non-terminal followed by the position of the production
         production = self.grammar.get_productions_for_nonterminal(head_input)[0]
         self.beta = self.beta[1:]
-        self.beta = production + self.beta
+        self.beta = production.split() + self.beta
 
     def advance(self):
         head_input = self.beta[0]
@@ -46,7 +57,7 @@ class Parser:
     def back(self):
         self.current_position -= 1
         head_working = self.alpha[-1]
-        self.beta = head_working[0] + self.beta
+        self.beta = [head_working[0]] + self.beta
         self.alpha = self.alpha[:-1]
 
     # check this for each case and the order of the conditions
@@ -57,28 +68,34 @@ class Parser:
 
         (non_terminal, index_non_terminal) = head_working
         productions = self.grammar.get_productions_for_nonterminal(non_terminal)
-        self.beta = self.beta[len(
-            productions[int(index_non_terminal) - 1]):]  # get rid of the previous production using its length
+        len_prod = len(productions[int(index_non_terminal) - 1].replace(" ", ""))
+        while len_prod > 0:
+            len_prod -= len(self.beta[0])
+            self.beta = self.beta[1:]
+
+        # self.beta = self.beta[len(
+        #     productions[int(index_non_terminal) - 1]):]  # get rid of the previous production using its length
         index = int(index_non_terminal)  # = i+1 since the index of the productions starts at 0
         if index < len(productions):
             self.state = ParsingStates.NORMAL_STATE
             self.alpha.append((non_terminal, index + 1))
-            self.beta = productions[index] + self.beta
+            self.beta = productions[index].split() + self.beta
         else:
             # should we raise an exception here?
             self.state = ParsingStates.BACK_STATE
             # self.alpha = self.alpha[:-1]
-            self.beta = non_terminal + self.beta
-        if self.current_position == 1 and non_terminal == "S":
+            self.beta = [non_terminal] + self.beta
+        if self.current_position == 1 and non_terminal == self.grammar.starting_symbol:
             self.state = ParsingStates.ERROR_STATE
 
     def success(self):
         self.state = ParsingStates.FINAL_STATE
 
-    def algorithm_descendent_recursive(self, w):
+    def algorithm_descendent_recursive(self, filename):
+        self.read_sequence_from_file(filename)
         while self.state != ParsingStates.FINAL_STATE and self.state != ParsingStates.ERROR_STATE:
             if self.state == ParsingStates.NORMAL_STATE:
-                n = len(w)
+                n = len(self.w)
 
                 if self.current_position == n + 1 and len(self.beta) == 0:
                     self.success()
@@ -87,7 +104,7 @@ class Parser:
                     if head_b in self.grammar.nonterminals:
                         self.expand()
                     else:
-                        if self.current_position - 1 < len(w) and head_b == w[self.current_position - 1]:
+                        if self.current_position - 1 < len(self.w) and head_b == self.w[self.current_position - 1]:
                             self.advance()
                         else:
                             self.momentary_insuccess()

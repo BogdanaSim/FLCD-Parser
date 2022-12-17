@@ -1,4 +1,4 @@
-from prettytable import PrettyTable,ALL
+from prettytable import PrettyTable, ALL
 
 
 class Row:
@@ -42,19 +42,19 @@ class ParserOutput:
                 return index, string_products
             head_status = products_stack[0]
             products_stack = products_stack[1:]
-            if head_status[0] in self.grammar.terminals:
-                self.table[index] = Row(head_status[0], parent, right_sibling)
+            if head_status in self.grammar.terminals:
+                self.table[index] = Row(head_status, parent, right_sibling)
                 right_sibling = index
                 index += 1
             else:
-                self.table[index] = Row(head_status[0], parent, right_sibling)
+                self.table[index] = Row(head_status, parent, right_sibling)
                 head_products = string_products[0]
                 product = self.grammar.get_productions_for_nonterminal(head_products[0])[head_products[1] - 1]
-                product = [*product]
+                product = product.split()
                 right_sibling = index
                 new_index = index + 1
                 index, string_products = self.get_recursive_table(new_index, index, 0, string_products[1:], product)
-        return index + 1, []
+        return index, []
 
     def print_table(self):
         string = ""
@@ -66,7 +66,16 @@ class ParserOutput:
     def print_pretty_table(self):
         table = [['Index', 'Info', 'Parent', 'Right Sibling']]
         tab = PrettyTable(table[0])
-        tab.hrules =ALL
+        tab.hrules = ALL
         for key in self.table:
             tab.add_row([key] + self.table[key].return_data())
         print(tab)
+
+    def print_pretty_table_to_file(self, filename):
+        table = [['Index', 'Info', 'Parent', 'Right Sibling']]
+        tab = PrettyTable(table[0])
+        tab.hrules = ALL
+        for key in self.table:
+            tab.add_row([key] + self.table[key].return_data())
+        with open(filename, "w") as file:
+            file.write(str(tab))
