@@ -27,6 +27,7 @@ class Parser:
 
     w: list = attrs.field(default=attrs.Factory(
         list))
+    index_error : int = attrs.field(default=0)
 
     def __attrs_post_init__(self):
         self.beta.append(self.grammar.starting_symbol)
@@ -46,6 +47,7 @@ class Parser:
         self.beta = production.split() + self.beta
 
     def advance(self):
+        self.index_error = 0
         head_input = self.beta[0]
         self.current_position += 1
         self.beta = self.beta[1:]
@@ -55,6 +57,8 @@ class Parser:
         self.state = ParsingStates.BACK_STATE
 
     def back(self):
+        if self.index_error==0:
+            self.index_error=self.current_position
         self.current_position -= 1
         head_working = self.alpha[-1]
         self.beta = [head_working[0]] + self.beta
@@ -117,7 +121,7 @@ class Parser:
                         self.another_try()
 
         if self.state == ParsingStates.ERROR_STATE:
-            print("Error")
+            print("Error in sequence at index "+str(self.index_error))
         else:
             print("Sequence accepted")
 

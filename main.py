@@ -5,7 +5,6 @@ from output import ParserOutput
 from parser import Parser, ParsingStates
 
 
-
 def print_grammar_menu():
     print("=== GRAMMAR ===\n")
     print("1 - Read grammar from file")
@@ -18,9 +17,52 @@ def print_grammar_menu():
     print()
 
 
+def print_parser_menu():
+    print("=== Parser ===\n")
+    print("1 - Parse seq.txt using g1")
+    print("2 - Parse PIF.out using g2")
+    print("3 - Exit")
+
+
 if __name__ == '__main__':
-    grammar = Grammar.get_grammar_from_file("g2.txt")
-    parser = Parser(grammar)
+    done = False
+
+    while not done:
+        print_parser_menu()
+        option = input("Choose an option: ")
+        if option == "1":
+            grammar1 = Grammar.get_grammar_from_file("g1.txt")
+            parser1 = Parser(grammar1)
+            print("Before parsing: " + str(parser1))
+            parser1.read_sequence_from_file("seq.txt")
+            print("Used sequence: "+str(" ".join(parser1.w)))
+            parser1.algorithm_descendent_recursive("seq.txt")
+            print("After parsing: " + str(parser1))
+            parser_out1 = ParserOutput(grammar1)
+            if parser1.state == ParsingStates.FINAL_STATE:
+                parser_out1.get_table(parser1.alpha)
+                # print(parser_out.print_table())
+                parser_out1.print_pretty_table()
+                parser_out1.print_pretty_table_to_file("out1.txt")
+        elif option == "2":
+            grammar2 = Grammar.get_grammar_from_file("g2.txt")
+            parser2 = Parser(grammar2)
+            print("Before parsing: " + str(parser2))
+            parser2.read_sequence_from_file("PIF.out")
+            print("Used sequence: " + str(" ".join(parser2.w)))
+            parser2.algorithm_descendent_recursive("PIF.out")
+            print("After parsing: " + str(parser2))
+            parser_out2 = ParserOutput(grammar2)
+            if parser2.state == ParsingStates.FINAL_STATE:
+                parser_out2.get_table(parser2.alpha)
+                # print(parser_out.print_table())
+                parser_out2.print_pretty_table()
+                parser_out2.print_pretty_table_to_file("out2.txt")
+        elif option == "3":
+            done = True
+        else:
+            print("This option does not exist!\n")
+
     # TODO: test/print results for each function
     # parser.alpha = [('S', 1), ('a', -1), ('S', 1), ('a', -1), ('S', 1)]
     # parser.beta = "aSbSbSbS"
@@ -39,13 +81,7 @@ if __name__ == '__main__':
     # parser.another_try()
     #
     # print(parser)
-    print(parser)
-    parser.algorithm_descendent_recursive("PIF.out")
-    print(parser)
-    parser_out = ParserOutput(grammar)
-    parser_out.get_table(parser.alpha)
-    # print(parser_out.print_table())
-    parser_out.print_pretty_table()
+
     # done = False
     # while not done:
     #     print_grammar_menu()
