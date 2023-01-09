@@ -1,11 +1,13 @@
+"""Implementation of parser using the recursive descent algorithm."""
+
 from enum import Enum
 import attrs
-from typing import List
 
 from grammar import Grammar
 
 
 class ParsingStates(Enum):
+    """Enumerates the states encountered in the RD parsing algorithm."""
     NORMAL_STATE = "q"
     BACK_STATE = "b"
     FINAL_STATE = "f"
